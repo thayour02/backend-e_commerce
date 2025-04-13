@@ -1,103 +1,99 @@
-const mongoose = require('mongoose')
-require('../db/database')
-const Menu = require("../model/menus.js")
+const mongoose = require("mongoose");
+require("../db/database");
+const Menu = require("../model/menus.js");
 
-const allMenu = async(req,res)=>{
-    try {
-        const menus = await Menu.find().sort({createdAt: -1});
-        return res.status(200).json({
-            success:true,
-            menus
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success:false,
-            message:error.message
-        })
+const allMenu = async (req, res) => {
+  try {
+    const menus = await Menu.find().sort({ createdAt: -1 });
+    return res.status(200).json({
+      success: true,
+      menus,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const addMenu = async (req, res) => {
+  try {
+    const { name, price, recipe, image, category } = req.body;
+
+    const addMenu = new Menu({
+      name,
+      price,
+      recipe,
+      image,
+      category,
+    });
+    await addMenu.save();
+
+    return res.status(200).json({
+      success: true,
+      addMenu,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const updateMenu = async (req, res) => {
+  const { id } = req.params;
+  const { name, recipe, price, image, category } = req.body;
+  try {
+    const updatedMenu = { name, recipe, price, image, category };
+
+    const edit = await Menu.findByIdAndUpdate({ _id: id }, updatedMenu, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Item Updated Sucessfully",
+      edit,
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const getMenuById = async (req, res) => {
+  const menuId = req.params.id;
+  try {
+    const menu = await Menu.findById(menuId);
+    if (!menu) {
+      return res.status(404).send({ message: "item not found" });
     }
-}
+    return res.status(202).json({
+      success: true,
+      menu,
+    });
+  } catch (error) {
+    return error;
+  }
+};
 
-const addMenu = async(req,res)=>{
-    try {
-        const {
-            name,price,recipe,image,category
-        }=req.body
-
-        const addMenu = new Menu({
-            name,price,recipe,image,category
-        })
-         await addMenu.save();
-
-        return res.status(200).json({
-            success:true,
-            addMenu
-        })
-    } catch (error) {
-        return res.status(400).json({
-            success:false,
-            message:error.message
-        })
+const deleteMenu = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const dele = await Menu.findByIdAndDelete({ _id: id });
+    if (!dele) {
+      return res.status(404).send({ message: "Menu Not Found" });
     }
-}
+    return res
+      .status(200)
+      .json({ message: "Menu Item deleted successfully", success: true });
+  } catch (error) {
+    return error;
+  }
+};
 
-const updateMenu = async(req,res)=>{
-    const {id} = req.params
-    const {name,recipe,price,image,category}= req.body
-    try {
-        const updatedMenu = {name,recipe,price,image,category}
-
-        const edit = await Menu.findByIdAndUpdate({ _id:id }, updatedMenu, {new:true, runValidators:true})
-        return res.status(200).json({
-            success:true,
-            message:"Item Updated Sucessfully",
-            edit
-        })
-    } catch (error) {
-        
-    }
-}
-
-const getMenuById = async(req,res)=>{
-    const  menuId  = req.params.id
-    console.log(menuId)
-    try {
-        const menu = await Menu.findById(menuId)
-        console.log(menu)
-        if(!menu){
-            return res.status(404).send({message:'item not found'})
-        }
-        return res.status(202).json({
-            success:true,
-            menu
-        })
-    } catch (error) {
-        return error
-    }
-}
-
-const deleteMenu = async (req,res)=>{
-    const {id} = req.params
-    try {
-        const dele = await Menu.findByIdAndDelete({_id:id})
-        if(!dele){
-            return res.status(404).send({message:"Menu Not Found"})
-        }
-       return res.status(200).json({message:"Menu Item deleted successfully", success:true})
-    } catch (error) {
-        return error   
-    }
-}
-
-module.exports = {addMenu,allMenu,deleteMenu, getMenuById,updateMenu }
-
-
-
-
-
-
-
-
-
+module.exports = { addMenu, allMenu, deleteMenu, getMenuById, updateMenu };
 
 // async function InsertMenuData() {
 //     try {

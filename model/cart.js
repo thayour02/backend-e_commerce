@@ -5,7 +5,7 @@ const Schema = require ('mongoose')
 const cartSchema = new mongoose.Schema({
     user:{type: Schema.Types.ObjectId, ref:'User'},
     name:{type:String},
-     menuItemId:{type:String},
+    menuItemId:{type:String},
     recipe:{type:String},
     category:{
         type:String,

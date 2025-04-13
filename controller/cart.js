@@ -4,6 +4,7 @@ require('../db/database')
 const Cart = require("../model/cart")
 const User = require('../model/user')
 
+
 const addToCart = async (req, res) => {
     try {
         const { menuItemId, name, recipe, image, quantity, email, price } = req.body
@@ -16,6 +17,7 @@ const addToCart = async (req, res) => {
             })
         }
         const cart = await Cart.create({ menuItemId, name, recipe, image, quantity, email, price })
+
         //updateuser
         const users = await User.findOneAndUpdate({ email }, {
             $push: {
@@ -36,7 +38,9 @@ const addToCart = async (req, res) => {
 }
 
 const getCartByEmail = async (req, res) => {
+
     const email = req.query.email
+
     try {
         const carts = await Cart.find({ email: email }).exec()
         if (!carts) {
@@ -56,6 +60,7 @@ const getCartByEmail = async (req, res) => {
 }
 
 const deleteCart = async (req, res) => {
+
     const id = req.params.id
     const email = req.query.email
 
@@ -65,6 +70,7 @@ const deleteCart = async (req, res) => {
             return res.status(404).send({ message: "vcart not found" })
         }
 
+        //update user
         const user = await User.findOneAndUpdate({ email },
             { $pull: { cart: cart._id } },
             { new: true })
@@ -75,11 +81,12 @@ const deleteCart = async (req, res) => {
             message: "items deleted succefully"
         })
     } catch (error) {
-        console.log(error.message)
+        throw new Error(error)
     }
 }
 
 const getCartById = async (req, res) => {
+    
     const id = req.params.id
     try {
         const menu = await Cart.findById({ _id: id })
@@ -91,7 +98,7 @@ const getCartById = async (req, res) => {
             })
         }
     } catch (error) {
-        console.log(error.message)
+        throw new Error(error)
     }
 }
 
@@ -109,7 +116,10 @@ const updateCartQuantity = async (req, res) => {
                 message: "cart updated successfully"
             })
     } catch (error) {
-        console.log(error.message)
+        throw new Error(error)
     }
 }
+
+
+
 module.exports = { addToCart, getCartByEmail, deleteCart, getCartById, updateCartQuantity }

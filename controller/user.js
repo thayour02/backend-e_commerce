@@ -13,11 +13,6 @@ const createUser =  async(req,res)=>{
         return res.status(302).json({message:"user alredy exist", success:false})
        }
        const users = await User.create(user)
-       consoles.log(users)
-    //    const token = json.sign
-    // const token = jwt.sign(users,process.env.JWT_SECRET_KEY,{
-    //     expiresIn:'1hr'
-    //   })
        return res.status(200).json({
         success:true,
         message:"account create successfully",
@@ -53,8 +48,7 @@ const deleteUser = async(req,res)=>{
         if(!deleteUser){
             return res.status(404).json({message:"user not exist"})
         }
-//         const cart = await Cart.findOne({user})
-//         console.log(cart)
+
 
         return res.status(200).json({
             message:"user deleted successfully",
@@ -91,7 +85,6 @@ const makeAdmin = async(req,res)=>{
     try {
         const updatedUser = await User.findByIdAndUpdate(userId,
             {role:"admin"},{new:true, runValidators:true})
-            console.log(updatedUser)
             if(!updatedUser){
                 return res.status(404).json({message:"User not found"})
             }
@@ -101,7 +94,7 @@ const makeAdmin = async(req,res)=>{
                 updatedUser
             })
     } catch (error) {
-        
+        throw new Error(error)
     }
 }
 const getUserByEmail = async(req,res)=>{
@@ -119,5 +112,19 @@ const getUserByEmail = async(req,res)=>{
 
 }
 
+const updatedUser = async(req,res)=>{
+    const {name,photoURL} = req.body
+    const email = req.query.email
 
-module.exports = {createUser,getAllUser,getUserByEmail,getAdmin,makeAdmin,deleteUser}
+    const updateData = { name, photoURL };
+    const query = {email:email}
+    try {
+        const update = await User.findOneAndUpdate(query,updateData,{new:true})
+        res.status(200).json(update)
+    } catch (error) {
+        throw new Error(error)
+    }
+}
+
+
+module.exports = {createUser,getAllUser,getUserByEmail,getAdmin,makeAdmin,deleteUser,updatedUser}
