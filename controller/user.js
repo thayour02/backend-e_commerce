@@ -5,6 +5,7 @@ const Cart = require('../model/cart')
 const { json } = require('express')
 
 const createUser =  async(req,res)=>{
+    
     const user = req.body
     const query ={email:user.email}
     try {

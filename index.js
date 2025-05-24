@@ -12,7 +12,7 @@ const job = require('./middleware/cron')
 require('dotenv').config()
 
 require('./db/database')
-const User = require('../server-side/model/user')
+const User = require('./model/user')
 
 
 
