@@ -7,6 +7,7 @@ const cartRoutes = require('./route/cart')
 const userRoutes = require('./route/user')
 const paymentRoutes = require('./route/payment')
 const jwt = require('jsonwebtoken')
+const job = require('./middleware/cron')
 // const stripe = require("stripe")(process.env.STRIPE_KEY);
 require('dotenv').config()
 
@@ -30,6 +31,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
+job.start()
 
 
 app.post("/jwt", async (req, res) => {
